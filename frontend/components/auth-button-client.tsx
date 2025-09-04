@@ -1,18 +1,25 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { LogoutButton } from "./logout-button";
 import { NotificationDropdown } from "./notification-dropdown";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { User, Plus, Settings } from "lucide-react";
 
-export async function AuthButton() {
-  const supabase = await createClient();
+export function AuthButtonClient() {
+  const { user, loading } = useAuth();
 
-  // You can also use getUser() which will be slower.
-  const { data } = await supabase.auth.getClaims();
-
-  const user = data?.claims;
+  if (loading) {
+    return (
+      <div className="flex gap-2">
+        <Button size="sm" variant="outline" disabled>
+          Loading...
+        </Button>
+      </div>
+    );
+  }
 
   return user ? (
     <div className="flex items-center gap-2">
