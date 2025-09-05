@@ -189,7 +189,7 @@ export class ProductsAPI {
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
           table: 'products',
           filter: `id=eq.${productId}`,
@@ -207,6 +207,16 @@ export class ProductsAPI {
         'postgres_changes',
         {
           event: 'INSERT',
+          schema: 'public',
+          table: 'bids',
+          filter: `product_id=eq.${productId}`,
+        },
+        callback
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
           schema: 'public',
           table: 'bids',
           filter: `product_id=eq.${productId}`,

@@ -156,6 +156,16 @@ export class BidsAPI {
         },
         callback
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bids',
+          filter: `product_id=eq.${productId}`,
+        },
+        callback
+      )
       .subscribe();
   }
 

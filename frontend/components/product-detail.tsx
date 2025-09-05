@@ -55,21 +55,23 @@ export function ProductDetail({ product: initialProduct }: ProductDetailProps) {
     return () => clearInterval(interval);
   }, [product.end_time]);
 
+  const refreshProduct = async () => {
+    try {
+      const updatedProduct = await productsAPI.getProduct(product.id);
+      setProduct(updatedProduct);
+      // Force bid history to refresh by updating the key
+      setBidHistoryKey(prev => prev + 1);
+    } catch (error) {
+      console.error('Error refreshing product:', error);
+    }
+  };
+
   // Real-time updates for product and bids
   useEffect(() => {
-    const refreshProduct = async () => {
-      try {
-        const updatedProduct = await productsAPI.getProduct(product.id);
-        setProduct(updatedProduct);
-      } catch (error) {
-        console.error('Error refreshing product:', error);
-      }
-    };
-
-    // Subscribe to product updates
+    // Subscribe to product updates (price changes, status changes)
     const productSubscription = productsAPI.subscribeToProduct(product.id, refreshProduct);
     
-    // Subscribe to bid updates
+    // Subscribe to bid updates (new bids, bid status changes)
     const bidsSubscription = productsAPI.subscribeToBids(product.id, refreshProduct);
 
     return () => {
